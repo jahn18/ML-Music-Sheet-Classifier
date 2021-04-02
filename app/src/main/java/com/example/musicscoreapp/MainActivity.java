@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void takePicture(){
+    public void takePicture(View view){
         Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
             startActivityForResult(photoIntent, REQUEST_IMAGE_CAPTURE);
@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView.setImageBitmap(imageBitmap);
+            ImageView imageView = (ImageView)findViewById(R.id.imageView);
+            imageView.setImageBitmap(imageBitmap);
         }
     }
 }
