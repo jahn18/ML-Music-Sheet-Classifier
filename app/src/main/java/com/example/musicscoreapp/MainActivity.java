@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             startActivityForResult(photoIntent, REQUEST_IMAGE_CAPTURE);
         } catch (ActivityNotFoundException e) {
-            // display error state to the user
+            //We follwed an onlne tutorial and most of the code was taken from that tutorial, link: https://developer.android.com/training/basics/firstapp
         }
     }
 
@@ -48,5 +48,6 @@ public class MainActivity extends AppCompatActivity {
             ImageView imageView = (ImageView)findViewById(R.id.imageView);
             imageView.setImageBitmap(imageBitmap);
         }
+        //Similar with the code that uses camera, the tutorial from which our code heavily referred is https://developer.android.com/training/camera/photobasics
     }
 }
