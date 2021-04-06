@@ -1,3 +1,4 @@
+//This code, along with any file that contains test, is auto-generated and they are not part of the project. They will likely be removed later.
 package com.example.musicscoreapp;
 
 import android.content.Context;
