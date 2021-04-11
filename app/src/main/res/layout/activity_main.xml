@@ -22,12 +22,11 @@
         android:id="@+id/button"
         android:layout_width="138dp"
         android:layout_height="77dp"
-        android:layout_marginStart="136dp"
-        android:layout_marginLeft="136dp"
-        android:layout_marginTop="476dp"
+        android:layout_marginTop="416dp"
         android:onClick="takePicture"
         android:rotationY="0"
         android:text="Take a picture!"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -52,5 +51,17 @@
         android:text="Picture Time!"
         app:layout_constraintBottom_toTopOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="138dp"
+        android:layout_height="77dp"
+        android:layout_marginTop="4dp"
+        android:onClick="pickPhoto"
+        android:text="Select a Photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

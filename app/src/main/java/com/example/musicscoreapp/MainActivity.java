@@ -4,7 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -15,9 +19,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int PICK_PHOTO_CODE = 2;
+
+    private String selectedImagePath;
+    private String fileManagerString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //Similar with the code that uses camera, the tutorial from which our code heavily referred is https://developer.android.com/training/camera/photobasics
     public void takePicture(View view){
         Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
@@ -39,6 +50,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void pickPhoto(View view) {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        //galleryIntent.setType("image/*");
+        if (galleryIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), PICK_PHOTO_CODE);
+        }
+
+    }
+
+    public Bitmap loadFromUri(Uri photoUri) {
+        Bitmap image = null;
+        try {
+            // check version of Android on device
+            if(Build.VERSION.SDK_INT > 27){
+                // on newer versions of Android, use the new decodeBitmap method
+                ImageDecoder.Source source = ImageDecoder.createSource(this.getContentResolver(), photoUri);
+                image = ImageDecoder.decodeBitmap(source);
+            } else {
+                // support older versions of Android by using getBitmap
+                image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -47,7 +87,13 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             ImageView imageView = (ImageView)findViewById(R.id.imageView);
             imageView.setImageBitmap(imageBitmap);
+        } else if (requestCode == PICK_PHOTO_CODE && resultCode == RESULT_OK) {
+            Uri photoUri = data.getData();
+            Bitmap imageBitmap = loadFromUri(photoUri);
+
+            ImageView imageView = (ImageView) findViewById(R.id.imageView);
+            imageView.setImageBitmap(imageBitmap);
         }
-        //Similar with the code that uses camera, the tutorial from which our code heavily referred is https://developer.android.com/training/camera/photobasics
     }
+
 }
