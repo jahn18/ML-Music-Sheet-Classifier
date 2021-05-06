@@ -11,11 +11,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -25,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int PICK_PHOTO_CODE = 2;
+    Button BSelectImage;
+    ImageView IVPreviewImage;
 
     private String selectedImagePath;
     private String fileManagerString;
@@ -33,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        BSelectImage = findViewById(R.id.button2);
+        IVPreviewImage = findViewById(R.id.imageView);
     }
 
     public void testMethod(View view){
@@ -51,13 +58,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void pickPhoto(View view) {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        //galleryIntent.setType("image/*");
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+        startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), PICK_PHOTO_CODE);
+        /*
         if (galleryIntent.resolveActivity(getPackageManager()) != null) {
+            //startActivityForResult(galleryIntent, PICK_PHOTO_CODE);
             startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), PICK_PHOTO_CODE);
         }
-
+        */
     }
 
     public Bitmap loadFromUri(Uri photoUri) {
@@ -89,11 +98,13 @@ public class MainActivity extends AppCompatActivity {
             imageView.setImageBitmap(imageBitmap);
         } else if (requestCode == PICK_PHOTO_CODE && resultCode == RESULT_OK) {
             Uri photoUri = data.getData();
-            Bitmap imageBitmap = loadFromUri(photoUri);
-
-            ImageView imageView = (ImageView) findViewById(R.id.imageView);
-            imageView.setImageBitmap(imageBitmap);
+            if (photoUri != null) {
+                IVPreviewImage.setImageURI(photoUri);
+            }
         }
     }
+
+
+
 
 }
