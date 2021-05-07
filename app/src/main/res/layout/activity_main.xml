@@ -22,11 +22,12 @@
         android:id="@+id/button"
         android:layout_width="138dp"
         android:layout_height="77dp"
-        android:layout_marginTop="416dp"
+        android:layout_marginTop="408dp"
         android:onClick="takePicture"
         android:rotationY="0"
         android:text="Take a picture!"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -56,11 +57,23 @@
         android:id="@+id/button2"
         android:layout_width="138dp"
         android:layout_height="77dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:onClick="pickPhoto"
         android:text="Select a Photo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="138dp"
+        android:layout_height="77dp"
+        android:layout_marginTop="92dp"
+        android:onClick="sendRequest"
+        android:text="SendReq"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button" />
 

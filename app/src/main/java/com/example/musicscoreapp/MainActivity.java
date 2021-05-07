@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
@@ -20,18 +21,44 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int PICK_PHOTO_CODE = 2;
+
+    private RequestQueue mRequestQueue;
+    private StringRequest mStringRequest;
+
     Button BSelectImage;
     ImageView IVPreviewImage;
 
-    private String selectedImagePath;
-    private String fileManagerString;
+    String imagePath;
+    Uri selectedImage;
+    Bitmap musicSheet;
+    String ba1;
+    //public static String destination = "http://35.232.70.229/";
+    public static String destination = "https://run.mocky.io/v3/b23ad42a-453f-4ce2-a570-dc1cc8e8fe24";
+
+
+    //private String selectedImagePath;
+    //private String fileManagerString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         }
         */
     }
-
+/*
     public Bitmap loadFromUri(Uri photoUri) {
         Bitmap image = null;
         try {
@@ -86,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return image;
     }
-
+*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -94,17 +121,39 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView imageView = (ImageView)findViewById(R.id.imageView);
-            imageView.setImageBitmap(imageBitmap);
+            //ImageView imageView = (ImageView)findViewById(R.id.imageView);
+            IVPreviewImage.setImageBitmap(imageBitmap);
         } else if (requestCode == PICK_PHOTO_CODE && resultCode == RESULT_OK) {
-            Uri photoUri = data.getData();
-            if (photoUri != null) {
-                IVPreviewImage.setImageURI(photoUri);
+            selectedImage = data.getData();
+            //Bundle extras = data.getExtras();
+            //musicSheet = (Bitmap) data.getExtras().get("data");
+
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            imagePath = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
+
+            //Bitmap photo = (Bitmap) data.getExtras().get("data");
+            //ImageView imageView = (ImageView)findViewById(R.id.imageView);
+            //imageView.setImageBitmap(photo);
+            if (selectedImage != null) {
+                IVPreviewImage.setImageURI(selectedImage);
             }
+
         }
     }
 
+    public void sendRequest(View view) {
+        mRequestQueue = Volley.newRequestQueue(this);
+        mStringRequest = new StringRequest(Request.Method.GET, destination, new Response.Listener<String>(){
 
-
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getApplicationContext(), "Response :" + response.toString(), Toast.LENGTH_LONG).show();
+            }
+        }, error -> Log.i(MainActivity.class.getName(),"Error :" + error.toString()));
+        mRequestQueue.add(mStringRequest);
+    }
 
 }
