@@ -54,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
     Bitmap musicSheet;
     String ba1;
     //public static String destination = "http://35.232.70.229/";
-    public static String destination = "https://run.mocky.io/v3/b23ad42a-453f-4ce2-a570-dc1cc8e8fe24";
+    //public static String destination = "https://run.mocky.io/v3/b23ad42a-453f-4ce2-a570-dc1cc8e8fe24";
+    public static String destination = "https://run.mocky.io/v3/905b9664-0425-4bdd-8742-b6a77aca9461";
 
 
     //private String selectedImagePath;
