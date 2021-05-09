@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue mRequestQueue;
     private StringRequest mStringRequest;
 
+    Bitmap imageToSend;
+
     Button BSelectImage;
     ImageView IVPreviewImage;
 
@@ -68,13 +70,14 @@ public class MainActivity extends AppCompatActivity {
     Bitmap musicSheet;
     String ba1;
     //public static String destination = "http://35.232.70.229/";
-    public static String destination = "https://httpbin.org/get";
-    //public static String destination = "https://run.mocky.io/v3/905b9664-0425-4bdd-8742-b6a77aca9461";
+    //public static String destination = "https://httpbin.org/get";
+    public static String destination = "https://run.mocky.io/v3/905b9664-0425-4bdd-8742-b6a77aca9461";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        imageToSend = null;
 
         BSelectImage = findViewById(R.id.button2);
         IVPreviewImage = findViewById(R.id.imageView);
@@ -102,15 +105,15 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            IVPreviewImage.setImageBitmap(imageBitmap);
+            imageToSend = (Bitmap) extras.get("data");
+            IVPreviewImage.setImageBitmap(imageToSend);
         } else if (requestCode == PICK_PHOTO_CODE && resultCode == RESULT_OK) {
             selectedImage = data.getData();
             try {
                 //getting bitmap object from uri
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                imageToSend = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                 //displaying selected image to imageview
-                IVPreviewImage.setImageBitmap(bitmap);
+                IVPreviewImage.setImageBitmap(imageToSend);
                 //calling the method uploadBitmap to upload image
                 //uploadBitmap(bitmap);
             } catch (IOException e) {
@@ -131,11 +134,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(String response) {
-            Toast.makeText(getApplicationContext(), "Response :" + response.toString(), Toast.LENGTH_LONG).show();
-        }
-    }, error -> Log.i(MainActivity.class.getName(), "Error :" + error.toString()));
+                Toast.makeText(getApplicationContext(), "Response :" + response.toString(), Toast.LENGTH_LONG).show();
+            }
+        }, error -> Log.i(MainActivity.class.getName(), "Error :" + error.toString()));
         mRequestQueue.add(mStringRequest);
-}
+    }
 
     /*
      * The method is takes an image in Bitmap form and
@@ -146,6 +149,14 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
+    }
+
+    public void uploadBitmap_(View view) {
+        if (imageToSend == null) {
+            Toast.makeText(getApplicationContext(), "No image selected", Toast.LENGTH_LONG).show();
+        } else {
+            uploadBitmap(imageToSend);
+        }
     }
 
     //UNTESTED
