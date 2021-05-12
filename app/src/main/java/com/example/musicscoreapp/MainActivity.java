@@ -2,39 +2,25 @@ package com.example.musicscoreapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ImageDecoder;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
 import com.android.volley.NetworkResponse;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -42,15 +28,18 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import es.ua.dlsi.im3.core.conversions.ScoreToPlayed;
+import es.ua.dlsi.im3.core.played.PlayedSong;
+import es.ua.dlsi.im3.core.played.io.MidiSongExporter;
+import es.ua.dlsi.im3.core.score.ScoreSong;
+import es.ua.dlsi.im3.omr.encoding.semantic.SemanticImporter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -67,8 +56,10 @@ public class MainActivity extends AppCompatActivity {
 
     String imagePath;
     Uri selectedImage;
-    Bitmap musicSheet;
-    String ba1;
+
+    private static final String receivedData = "inputTokens.semantic";
+    private static final String outputMIDI = "output.mid";
+
     //public static String destination = "http://35.232.70.229/";
     //public static String destination = "https://httpbin.org/get";
     public static String destination = "https://run.mocky.io/v3/905b9664-0425-4bdd-8742-b6a77aca9461";
@@ -213,5 +204,38 @@ public class MainActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(volleyMultipartRequest);
     }
 
+    public void testMID(View view) {
+        String testNote = "clef-G2\tkeySignature-EbM\ttimeSignature-C\tmultirest-10\tbarline\trest-half\t\tnote-G4_eighth\tnote-C5_quarter\tbarline\t";
+        generateMIDIFile(testNote);
+    }
 
+    public void generateMIDIFile(String response) {
+        FileOutputStream fos = null;
+        try {
+            fos = openFileOutput(receivedData, MODE_PRIVATE);
+            fos.write(response.getBytes());
+            Toast.makeText(this, "POST response saved to " + getFilesDir() + "/" + receivedData, Toast.LENGTH_LONG).show();
+            SemanticImporter semanticImporter = new SemanticImporter();
+            ScoreSong scoreSong = semanticImporter.importSong(new File(receivedData));
+            String outputFileName = outputMIDI;
+            new PlayedSong();
+            ScoreToPlayed scoreToPlayed = new ScoreToPlayed();
+            PlayedSong playedSong = scoreToPlayed.createPlayedSongFromScore(scoreSong);
+            MidiSongExporter midiSongExporter = new MidiSongExporter();
+            midiSongExporter.exportSong(new File(outputFileName), playedSong);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try{
+                    fos.close();
+                    //getApplicationContext().deleteFile(receivedData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 }
