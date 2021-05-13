@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     String imagePath;
     Uri selectedImage;
 
-    private static final String receivedData = "inputTokens.semantic";
     private static final String outputMIDI = "output.mid";
 
     //public static String destination = "http://35.232.70.229/";
@@ -209,17 +208,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testMID(View view)  {
-        String testNote = "clef-G2\tkeySignature-EbM\ttimeSignature-C\tmultirest-10\tbarline\trest-half\tnote-G4_eighth\tnote-C5_quarter\tnote-B4_eighth\tbarline\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\tnote-C5_quarter\tbarline\t";
+        String testNote = "clef-G2\tkeySignature-EbM\ttimeSignature-C\tmultirest-10\tbarline\trest-half\tnote-G4_eighth\tnote-C5_quarter\tnote-B4_eighth\tbarline\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\tbarline\t";
         generateMIDIFile(testNote);
     }
 
     public void generateMIDIFile(String response)  {
-        //FileOutputStream fos = null;
-        //MidiSongExporter midiSongExporter = new MidiSongExporter();
         try {
-            //fos = openFileOutput(receivedData, MODE_PRIVATE);
-            //fos.write(response.getBytes());
-            Toast.makeText(this, "POST response saved to " + getFilesDir() + "/" + receivedData, Toast.LENGTH_LONG).show();
             SemanticImporter semanticImporter = new SemanticImporter();
             ScoreSong scoreSong = semanticImporter.importSong(response);
             new PlayedSong();
@@ -228,20 +222,10 @@ public class MainActivity extends AppCompatActivity {
             FileOutputStream midiOutStream = openFileOutput(outputMIDI, MODE_PRIVATE);
             MidiSongExporterWrapper midiSongExporter = new MidiSongExporterWrapper();
             midiSongExporter.exportSongHook(midiOutStream, playedSong);
+            Toast.makeText(this, "Music successfully generated", Toast.LENGTH_LONG).show();
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            /*
-            if (fos != null) {
-                try{
-                    fos.close();
-                    //getApplicationContext().deleteFile(receivedData);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-             */
         }
 
     }
