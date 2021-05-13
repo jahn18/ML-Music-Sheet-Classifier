@@ -30,16 +30,20 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.sound.midi.Sequence;
 
 import es.ua.dlsi.im3.core.conversions.ScoreToPlayed;
 import es.ua.dlsi.im3.core.played.PlayedSong;
 import es.ua.dlsi.im3.core.played.io.MidiSongExporter;
 import es.ua.dlsi.im3.core.score.ScoreSong;
 import es.ua.dlsi.im3.omr.encoding.semantic.SemanticImporter;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -204,29 +208,31 @@ public class MainActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(volleyMultipartRequest);
     }
 
-    public void testMID(View view) {
-        String testNote = "clef-G2\tkeySignature-EbM\ttimeSignature-C\tmultirest-10\tbarline\trest-half\t\tnote-G4_eighth\tnote-C5_quarter\tbarline\t";
+    public void testMID(View view)  {
+        String testNote = "clef-G2\tkeySignature-EbM\ttimeSignature-C\tmultirest-10\tbarline\trest-half\tnote-G4_eighth\tnote-C5_quarter\tnote-B4_eighth\tbarline\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\tnote-C5_quarter\tbarline\t";
         generateMIDIFile(testNote);
     }
 
-    public void generateMIDIFile(String response) {
-        FileOutputStream fos = null;
+    public void generateMIDIFile(String response)  {
+        //FileOutputStream fos = null;
+        //MidiSongExporter midiSongExporter = new MidiSongExporter();
         try {
-            fos = openFileOutput(receivedData, MODE_PRIVATE);
-            fos.write(response.getBytes());
+            //fos = openFileOutput(receivedData, MODE_PRIVATE);
+            //fos.write(response.getBytes());
             Toast.makeText(this, "POST response saved to " + getFilesDir() + "/" + receivedData, Toast.LENGTH_LONG).show();
             SemanticImporter semanticImporter = new SemanticImporter();
-            ScoreSong scoreSong = semanticImporter.importSong(new File(receivedData));
-            String outputFileName = outputMIDI;
+            ScoreSong scoreSong = semanticImporter.importSong(response);
             new PlayedSong();
             ScoreToPlayed scoreToPlayed = new ScoreToPlayed();
             PlayedSong playedSong = scoreToPlayed.createPlayedSongFromScore(scoreSong);
-            MidiSongExporter midiSongExporter = new MidiSongExporter();
-            midiSongExporter.exportSong(new File(outputFileName), playedSong);
+            FileOutputStream midiOutStream = openFileOutput(outputMIDI, MODE_PRIVATE);
+            MidiSongExporterWrapper midiSongExporter = new MidiSongExporterWrapper();
+            midiSongExporter.exportSongHook(midiOutStream, playedSong);
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            /*
             if (fos != null) {
                 try{
                     fos.close();
@@ -235,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+             */
         }
 
     }
