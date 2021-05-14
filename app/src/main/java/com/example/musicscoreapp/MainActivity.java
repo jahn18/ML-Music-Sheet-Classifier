@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -62,16 +64,18 @@ public class MainActivity extends AppCompatActivity {
     Uri selectedImage;
 
     private static final String outputMIDI = "output.mid";
+    private boolean outputExists;
 
     //public static String destination = "http://35.232.70.229/";
     //public static String destination = "https://httpbin.org/get";
-    public static String destination = "https://run.mocky.io/v3/905b9664-0425-4bdd-8742-b6a77aca9461";
+    public static String destination = "https://run.mocky.io/v3/9d145d93-8132-4ffc-9f90-d699ced0e99f";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imageToSend = null;
+        outputExists = false;
 
         BSelectImage = findViewById(R.id.button2);
         IVPreviewImage = findViewById(R.id.imageView);
@@ -166,7 +170,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(NetworkResponse response) {
                         try {
                             JSONObject obj = new JSONObject(new String(response.data));
-                            Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+                            String musicTokens = new String(response.data);
+                            Toast.makeText(getApplicationContext(), "sent to web app, music tokens are:" + musicTokens, Toast.LENGTH_LONG).show();
+                            generateMIDIFile(musicTokens);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -175,9 +181,10 @@ public class MainActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "failed to send to web app", Toast.LENGTH_SHORT).show();
                     }
-                }) {
+                })
+        {
 
             /*
              * If you want to add more parameters with the image
@@ -208,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testMID(View view)  {
-        String testNote = "clef-G2\tkeySignature-EbM\ttimeSignature-C\tmultirest-10\tbarline\trest-half\tnote-G4_eighth\tnote-C5_quarter\tnote-B4_eighth\tbarline\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\tbarline\t";
+        String testNote = "clef-G2\tkeySignature-EbM\ttimeSignature-C\trest-half\tnote-G4_eighth\tnote-C5_quarter\tnote-B4_eighth\tbarline\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\tbarline\t";
         generateMIDIFile(testNote);
     }
 
@@ -223,9 +230,20 @@ public class MainActivity extends AppCompatActivity {
             MidiSongExporterWrapper midiSongExporter = new MidiSongExporterWrapper();
             midiSongExporter.exportSongHook(midiOutStream, playedSong);
             Toast.makeText(this, "Music successfully generated", Toast.LENGTH_LONG).show();
-
+            outputExists = true;
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+    }
+
+    public void playAudio(View view) {
+        if (!outputExists) {
+            Toast.makeText(this, "Audio file does not exist", Toast.LENGTH_LONG).show();
+        } else {
+            File audioFile = new File(getApplicationContext().getFilesDir(), outputMIDI);
+            MediaPlayer mediaPlayer = MediaPlayer.create(this, Uri.fromFile(audioFile));
+            mediaPlayer.start();
         }
 
     }
