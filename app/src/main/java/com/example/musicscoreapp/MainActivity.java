@@ -10,6 +10,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.service.autofill.FieldClassification;
 import android.util.Log;
 import android.view.View;
 
@@ -37,6 +38,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.sound.midi.Sequence;
 
@@ -138,11 +141,10 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<NetworkResponse>() {
                     @Override
                     public void onResponse(NetworkResponse response) {
-                        //JSONObject obj = new JSONObject(new String(response.data));
                         String musicTokens = new String(response.data);
                         Toast.makeText(getApplicationContext(), "sent to web app:" + destination + ", music tokens are:" + musicTokens, Toast.LENGTH_LONG).show();
-                        generateMIDIFile(musicTokens);
-
+                        String musicTokenVerified = failSafe(musicTokens);
+                        generateMIDIFile(musicTokenVerified);
                     }
                 },
                 new Response.ErrorListener() {
@@ -190,6 +192,40 @@ public class MainActivity extends AppCompatActivity {
         String testNote2 = "clef-G2\tkeySignature-EbM\ttimeSignature-C\trest-half\tnote-G4_eighth\tnote-C5_quarter\tbarline\tnote-B4_eighth\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\t";
         String testNote3 = "clef-G2\tkeySignature-EbM\trest-half\tnote-G4_eighth\tnote-G4_eighth\tnote-G4_eighth\tnote-G4_eighth\tnote-C5_quarter\tnote-C5_quarter\tnote-G4_eighth\tnote-C5_quarter\tnote-C5_whole\tnote-B4_eighth\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\t";
         generateMIDIFile(testNote);
+    }
+    /*
+     * This function is a failSafe in cases when the machine learning algorithm passes back a string that cannot be correctly
+     * parsed by the PriMus semantic converter (ie. greatly mitigates the chance of error when passing a string into generateMIDIFile)
+     *
+     */
+    public static String failSafe(String response) {
+        Pattern regexClef = Pattern.compile("clef-[CFG][12345]");
+        Pattern regexKey = Pattern.compile("keySignature-...");
+        Matcher clef = regexClef.matcher(response);
+        Matcher key = regexKey.matcher(response);
+        String clefString = "";
+        String keyString = "";
+        StringBuilder failSafe = new StringBuilder();
+
+        if (clef.find()) {
+            clefString = clef.group(0);
+            failSafe.append(clefString);
+            failSafe.append("\t");
+        }
+        if (key.find()) {
+            keyString = key.group(0);
+            failSafe.append(keyString);
+            failSafe.append("\t");
+        }
+        String notesOnly = response.replaceAll("clef-[CFG][12345]\t", "");
+        String notesOnly2 = notesOnly.replaceAll("keySignature-...\t", "");
+        String notesOnly3 = notesOnly2.replaceAll("barline\t", "");
+        String notesOnly4 = notesOnly3.replaceAll("timeSignature-.{1,4}\t", "");
+        String notesOnly5 = notesOnly4.replaceAll("tie\t","");
+
+        failSafe.append(notesOnly5);
+
+        return failSafe.toString();
     }
 
     public void generateMIDIFile(String response)  {
