@@ -25,7 +25,7 @@ public class UploadToServer extends Request<NetworkResponse> {
 
     private final String twoHyphens = "--";
     private final String lineEnd = "\r\n";
-    private final String boundary = "apiclient-" + System.currentTimeMillis();
+    private final String boundary = "apiclient-" + "12345";
 
     private Response.Listener<NetworkResponse> mListener;
     private Response.ErrorListener mErrorListener;
@@ -56,11 +56,12 @@ public class UploadToServer extends Request<NetworkResponse> {
 
         try {
             // populate text payload
+            /*
             Map<String, String> params = getParams();
             if (params != null && params.size() > 0) {
                 textParse(dos, params, getParamsEncoding());
             }
-
+            */
             // populate data byte payload
             Map<String, DataPart> data = getByteData();
             if (data != null && data.size() > 0) {
@@ -163,6 +164,7 @@ public class UploadToServer extends Request<NetworkResponse> {
      * @throws IOException
      */
     private void buildDataPart(DataOutputStream dataOutputStream, DataPart dataFile, String inputName) throws IOException {
+        /*
         dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
         dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" +
                 inputName + "\"; filename=\"" + dataFile.getFileName() + "\"" + lineEnd);
@@ -170,6 +172,7 @@ public class UploadToServer extends Request<NetworkResponse> {
             dataOutputStream.writeBytes("Content-Type: " + dataFile.getType() + lineEnd);
         }
         dataOutputStream.writeBytes(lineEnd);
+         */
 
         ByteArrayInputStream fileInputStream = new ByteArrayInputStream(dataFile.getContent());
         int bytesAvailable = fileInputStream.available();

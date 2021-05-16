@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     //public static String destination = "http://35.232.70.229/";
     //public static String destination = "https://httpbin.org/get";
-    public static String destination = "https://run.mocky.io/v3/9d145d93-8132-4ffc-9f90-d699ced0e99f";
+    public static String destination = "http://34.123.251.91/image";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,20 +168,17 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<NetworkResponse>() {
                     @Override
                     public void onResponse(NetworkResponse response) {
-                        try {
-                            JSONObject obj = new JSONObject(new String(response.data));
-                            String musicTokens = new String(response.data);
-                            Toast.makeText(getApplicationContext(), "sent to web app, music tokens are:" + musicTokens, Toast.LENGTH_LONG).show();
-                            generateMIDIFile(musicTokens);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        //JSONObject obj = new JSONObject(new String(response.data));
+                        String musicTokens = new String(response.data);
+                        Toast.makeText(getApplicationContext(), "sent to web app:" + destination + ", music tokens are:" + musicTokens, Toast.LENGTH_LONG).show();
+                        generateMIDIFile(musicTokens);
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), "failed to send to web app", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "failed to send to web app:" + destination, Toast.LENGTH_SHORT).show();
                     }
                 })
         {
@@ -205,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected Map<String, UploadToServer.DataPart> getByteData() {
                 Map<String, UploadToServer.DataPart> params = new HashMap<>();
-                long imageName = System.currentTimeMillis();
+                String imageName = "image";
                 params.put("pic", new UploadToServer.DataPart(imageName + ".png", getFileDataBitMap(bitmap)));
                 return params;
             }
@@ -214,8 +211,11 @@ public class MainActivity extends AppCompatActivity {
         Volley.newRequestQueue(this).add(volleyMultipartRequest);
     }
 
+
     public void testMID(View view)  {
         String testNote = "clef-G2\tkeySignature-EbM\ttimeSignature-C\trest-half\tnote-G4_eighth\tnote-C5_quarter\tnote-B4_eighth\tbarline\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\tbarline\t";
+        String testNote2 = "clef-G2\tkeySignature-EbM\ttimeSignature-C\trest-half\tnote-G4_eighth\tnote-C5_quarter\tbarline\tnote-B4_eighth\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\t";
+        String testNote3 = "clef-G2\tkeySignature-EbM\trest-half\tnote-G4_eighth\tnote-G4_eighth\tnote-G4_eighth\tnote-G4_eighth\tnote-C5_quarter\tnote-C5_quarter\tnote-G4_eighth\tnote-C5_quarter\tnote-C5_whole\tnote-B4_eighth\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\t";
         generateMIDIFile(testNote);
     }
 
@@ -233,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
             outputExists = true;
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(this, "Music failed to generate", Toast.LENGTH_LONG).show();
         }
 
     }
@@ -245,6 +246,5 @@ public class MainActivity extends AppCompatActivity {
             MediaPlayer mediaPlayer = MediaPlayer.create(this, Uri.fromFile(audioFile));
             mediaPlayer.start();
         }
-
     }
 }
