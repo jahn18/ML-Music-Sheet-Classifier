@@ -150,7 +150,34 @@ public class MainActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getApplicationContext(), "failed to send to web app:" + destination, Toast.LENGTH_SHORT).show();
                     }
-                });
+                })
+        {
+
+            /*
+             * If you want to add more parameters with the image
+             * you can do it here
+             * here we have only one parameter with the image
+             * which is tags
+             * */
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("tags", "tags");
+                return params;
+            }
+
+            /*
+             * Here we are passing image by renaming it with a unique name
+             * */
+            @Override
+            protected Map<String, UploadToServer.DataPart> getByteData() {
+                Map<String, UploadToServer.DataPart> params = new HashMap<>();
+                String imageName = "image";
+                params.put("pic", new UploadToServer.DataPart(imageName + ".png", getFileDataBitMap(bitmap)));
+                return params;
+            }
+        };
+                ;
 
         Volley.newRequestQueue(this).add(volleyMultipartRequest);
     }
