@@ -16,8 +16,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-/**
- * Credits to Belal for this custom multipart library to ease the image uploading
+/*
+ * Credits to Belal for this custom multipart library to ease the image uploading since Volley
+ * does not support a MultiPart request by default
  * https://www.simplifiedcoding.net/upload-image-to-server/#Android-Upload-Image-to-Server-using-Volley
  */
 
@@ -29,7 +30,6 @@ public class UploadToServer extends Request<NetworkResponse> {
 
     private Response.Listener<NetworkResponse> mListener;
     private Response.ErrorListener mErrorListener;
-    private Map<String, String> mHeaders;
 
     public UploadToServer(int method, String url,
                                   Response.Listener<NetworkResponse> listener,
@@ -37,11 +37,6 @@ public class UploadToServer extends Request<NetworkResponse> {
         super(method, url, errorListener);
         this.mListener = listener;
         this.mErrorListener = errorListener;
-    }
-
-    @Override
-    public Map<String, String> getHeaders() throws AuthFailureError {
-        return (mHeaders != null) ? mHeaders : super.getHeaders();
     }
 
     @Override
@@ -55,13 +50,6 @@ public class UploadToServer extends Request<NetworkResponse> {
         DataOutputStream dos = new DataOutputStream(bos);
 
         try {
-            // populate text payload
-            /*
-            Map<String, String> params = getParams();
-            if (params != null && params.size() > 0) {
-                textParse(dos, params, getParamsEncoding());
-            }
-            */
             // populate data byte payload
             Map<String, DataPart> data = getByteData();
             if (data != null && data.size() > 0) {
@@ -164,15 +152,6 @@ public class UploadToServer extends Request<NetworkResponse> {
      * @throws IOException
      */
     private void buildDataPart(DataOutputStream dataOutputStream, DataPart dataFile, String inputName) throws IOException {
-        /*
-        dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
-        dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" +
-                inputName + "\"; filename=\"" + dataFile.getFileName() + "\"" + lineEnd);
-        if (dataFile.getType() != null && !dataFile.getType().trim().isEmpty()) {
-            dataOutputStream.writeBytes("Content-Type: " + dataFile.getType() + lineEnd);
-        }
-        dataOutputStream.writeBytes(lineEnd);
-         */
 
         ByteArrayInputStream fileInputStream = new ByteArrayInputStream(dataFile.getContent());
         int bytesAvailable = fileInputStream.available();

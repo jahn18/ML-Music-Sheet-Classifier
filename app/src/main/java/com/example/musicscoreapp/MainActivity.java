@@ -60,14 +60,9 @@ public class MainActivity extends AppCompatActivity {
     Button BSelectImage;
     ImageView IVPreviewImage;
 
-    String imagePath;
-    Uri selectedImage;
-
     private static final String outputMIDI = "output.mid";
     private boolean outputExists;
 
-    //public static String destination = "http://35.232.70.229/";
-    //public static String destination = "https://httpbin.org/get";
     public static String destination = "http://34.123.251.91/image";
 
     @Override
@@ -81,12 +76,6 @@ public class MainActivity extends AppCompatActivity {
         IVPreviewImage = findViewById(R.id.imageView);
     }
 
-    public void testMethod(View view) {
-        Intent intent = new Intent(this, TestActivity.class);
-        startActivity(intent);
-    }
-
-    //Similar with the code that uses camera, the tutorial from which our code heavily referred is https://developer.android.com/training/camera/photobasics
     public void takePicture(View view) {
         Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(photoIntent, REQUEST_IMAGE_CAPTURE);
@@ -106,36 +95,14 @@ public class MainActivity extends AppCompatActivity {
             imageToSend = (Bitmap) extras.get("data");
             IVPreviewImage.setImageBitmap(imageToSend);
         } else if (requestCode == PICK_PHOTO_CODE && resultCode == RESULT_OK) {
-            selectedImage = data.getData();
+            Uri selectedImage = data.getData();
             try {
-                //getting bitmap object from uri
                 imageToSend = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                //displaying selected image to imageview
                 IVPreviewImage.setImageBitmap(imageToSend);
-                //calling the method uploadBitmap to upload image
-                //uploadBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //Get path information
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-            cursor.moveToFirst();
-
-            imagePath = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
         }
-    }
-
-    public void sendRequest(View view) {
-        mRequestQueue = Volley.newRequestQueue(this);
-        mStringRequest = new StringRequest(Request.Method.GET, destination, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                Toast.makeText(getApplicationContext(), "Response :" + response.toString(), Toast.LENGTH_LONG).show();
-            }
-        }, error -> Log.i(MainActivity.class.getName(), "Error :" + error.toString()));
-        mRequestQueue.add(mStringRequest);
     }
 
     /*
@@ -149,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
         return byteArrayOutputStream.toByteArray();
     }
 
+    /*
+     * Wrapper function for uploading the image to the ML server
+     * */
     public void uploadBitmap_(View view) {
         if (imageToSend == null) {
             Toast.makeText(getApplicationContext(), "No image selected", Toast.LENGTH_LONG).show();
@@ -157,12 +127,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //UNTESTED
+    /*
+     * Credits to Belal for this custom multipart library to ease the image uploading since Volley
+     * does not support a MultiPart request by default
+     * https://www.simplifiedcoding.net/upload-image-to-server/#Android-Upload-Image-to-Server-using-Volley
+     */
     private void uploadBitmap(final Bitmap bitmap) {
-
-        //tag for the uploaded image - doesn't matter for now
-        String tags = "Music Sheet";
-
         //custom volley request
         UploadToServer volleyMultipartRequest = new UploadToServer(Request.Method.POST, destination,
                 new Response.Listener<NetworkResponse>() {
@@ -180,38 +150,14 @@ public class MainActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getApplicationContext(), "failed to send to web app:" + destination, Toast.LENGTH_SHORT).show();
                     }
-                })
-        {
-
-            /*
-             * If you want to add more parameters with the image
-             * you can do it here
-             * here we have only one parameter with the image
-             * which is tags
-             * */
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("tags", tags);
-                return params;
-            }
-
-            /*
-             * Here we are passing image by renaming it with a unique name
-             * */
-            @Override
-            protected Map<String, UploadToServer.DataPart> getByteData() {
-                Map<String, UploadToServer.DataPart> params = new HashMap<>();
-                String imageName = "image";
-                params.put("pic", new UploadToServer.DataPart(imageName + ".png", getFileDataBitMap(bitmap)));
-                return params;
-            }
-        };
+                });
 
         Volley.newRequestQueue(this).add(volleyMultipartRequest);
     }
 
-
+    /*
+     * This function was used for testing purposes - it was instrumental to ensuring correctness of the generateMIDIFile method
+     */
     public void testMID(View view)  {
         String testNote = "clef-G2\tkeySignature-EbM\ttimeSignature-C\trest-half\tnote-G4_eighth\tnote-C5_quarter\tnote-B4_eighth\tbarline\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\tbarline\t";
         String testNote2 = "clef-G2\tkeySignature-EbM\ttimeSignature-C\trest-half\tnote-G4_eighth\tnote-C5_quarter\tbarline\tnote-B4_eighth\tnote-C5_thirty_second\tnote-D5_thirty_second\tnote-Eb5_sixteenth\tnote-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\t";
@@ -235,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
             Toast.makeText(this, "Music failed to generate", Toast.LENGTH_LONG).show();
         }
-
     }
 
     public void playAudio(View view) {
