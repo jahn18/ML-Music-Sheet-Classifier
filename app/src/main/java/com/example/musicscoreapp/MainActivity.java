@@ -27,6 +27,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -80,8 +82,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void takePicture(View view) {
-        Intent photoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(photoIntent, REQUEST_IMAGE_CAPTURE);
+        CropImage.activity().start(MainActivity.this);
     }
 
     public void pickPhoto(View view) {
@@ -104,6 +105,17 @@ public class MainActivity extends AppCompatActivity {
                 IVPreviewImage.setImageBitmap(imageToSend);
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                try {
+                    imageToSend = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+                    IVPreviewImage.setImageBitmap(imageToSend);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
