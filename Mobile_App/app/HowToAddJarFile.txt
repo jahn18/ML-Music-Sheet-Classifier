@@ -1,0 +1,11 @@
+How to add a jar file
+
+- Since the primus conversor jar file is too big to be pushed on to github, you will need to add it yourself after pulling
+
+- In android studio, go to "Project" View, right click on "app" and create a new folder and name it "libs"
+
+- Then paste the jar file (name is omr-3.0-SNAPSHOT.jar) into the libs folder that was created
+
+- Then go to File >>> Project Structure, and click on Dependencies, then add the jar file as a jar dependency.
+
+- The path to the jar should be libs/omr-3.0-SNAPSHOT.jar or libs\omr-3.0-SNAPSHOT.jar depending on your OS

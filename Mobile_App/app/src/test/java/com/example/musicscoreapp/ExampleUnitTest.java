@@ -1,18 +1,21 @@
-//This code, along with any file that contains test, is auto-generated and they are not part of the project. They will likely be removed later.
 package com.example.musicscoreapp;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Ground for testing functions without having to actually run the applications on a phone or emulator
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
     @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+    public void regexTest() {
+        String testNote = "clef-G2\tclef-G2\tkeySignature-EbM\ttimeSignature-C\trest-half\tnote-G4_eighth\tnote-C5_quarter\t" +
+                "note-B4_eighth\tbarline\tnote-C5_thirty_second\tclef-F2\tnote-D5_thirty_second\ttimeSignature-3/1\tkeySignature-14s\tnote-Eb5_sixteenth\t" +
+                "note-Eb5_quarter\tnote-D5_eighth\tnote-G5_eighth\tbarline\t";
+        String output = MainActivity.failSafe(testNote);
+        System.out.println(output);
     }
 }
