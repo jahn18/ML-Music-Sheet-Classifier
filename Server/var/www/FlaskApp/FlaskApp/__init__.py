@@ -13,14 +13,14 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    from ml4 import MusicClassifer
+    from ml5 import MusicClassifer
     from HorizSplit import Split
     image  = PIL.Image.open('/var/www/FlaskApp/FlaskApp/sample2.png')
     inst = Split(image)
     list = inst.horSplit(oneChannel = False, devi = 20)
     string = " "
     for img in list:
-        music = MusicClassifer('/var/www/FlaskApp/FlaskApp/mlModelFixed.pth', img, '/var/www/FlaskApp/FlaskApp/vocabulary_semantic.txt')
+        music = MusicClassifer('/var/www/FlaskApp/FlaskApp/music_classifer_double_model.pth', img, '/var/www/FlaskApp/FlaskApp/vocabulary_semantic.txt')
         musicFile = music.classifyMusicNotes()
         string += " ".join(str(x) for x in musicFile)
         string += " "
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
 @app.route('/image', methods=['POST', 'GET'])
 def req():
-    from ml4 import MusicClassifer
+    from ml5 import MusicClassifer
     from readImage import readImage
     from HorizSplit import Split
     if request.method == 'GET':
@@ -61,7 +61,7 @@ def req():
         list = inst.horSplit(oneChannel = False, devi = 20)
         string = ""
         for img in list:
-            music = MusicClassifer('/var/www/FlaskApp/FlaskApp/mlModelFixed.pth', img,'/var/www/FlaskApp/FlaskApp/vocabulary_semantic.txt')
+            music = MusicClassifer('/var/www/FlaskApp/FlaskApp/music_classifer_double_model.pth', img,'/var/www/FlaskApp/FlaskApp/vocabulary_semantic.txt')
             musicFile = music.classifyMusicNotes()
             string += " ".join(str(x) for x in musicFile)
             string += " "
