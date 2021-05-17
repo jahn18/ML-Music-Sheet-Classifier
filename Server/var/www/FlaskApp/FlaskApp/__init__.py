@@ -1,3 +1,6 @@
+#The code consists of massive amount of commented out code
+#This is to keep track of the methods that do not work yet are attempted.
+
 from flask import Flask, request, jsonify, json
 import io
 import sys
