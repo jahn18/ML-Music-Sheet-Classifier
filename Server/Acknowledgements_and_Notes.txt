@@ -1,0 +1,5 @@
+The .wsgi and the .conf files within this (Server) folder are taken from the online tutorial:
+https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-application-on-an-ubuntu-vps
+This is to acknowledge it.
+Also, the files involving creating a virtual environment is not included, as they are not relavant,
+despite them existing in the actual virtual machine I used to set up the server.
