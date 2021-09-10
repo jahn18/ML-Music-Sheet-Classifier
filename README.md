@@ -19,7 +19,7 @@ pip install -r requirements.txt
 # How to Run
 
 1. To classify your own music sheet, please go to the project directory and run the following script with the following parameters: 
-```python 
+```
 python predict_semantic.py -m src/music_classifer_model.pth -v semantics/vocabulary_semantic.txt -f [input_image]
 ``` 
 
@@ -29,7 +29,7 @@ Constraints:
 
 ### Example Usage:
   1. Input the sample.png image provided in the sample_image directory. 
- ``` python 
+ ``` 
  python predict_semantic.py -m src/music_classifer_model.pth -v semantics/vocabulary_semantic.txt -f sample_image/sample.png
  ``` 
 2. You should recieve the following output:
