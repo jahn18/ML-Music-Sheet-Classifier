@@ -12,7 +12,7 @@ In this project, I developed a Pytorch-based machine-learning model that can tra
 1. Ensure that Python>=3.9 (with pip) is installed
 
 2. In the project directory, install the required packages. 
-```python
+```
 pip install -r requirements.txt
 ```
 
