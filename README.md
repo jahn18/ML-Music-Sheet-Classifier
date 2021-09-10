@@ -1,4 +1,4 @@
-# ML-Music-Sheet-Playback-Processor: 
+# ML-Music-Sheet-Playback: 
 
 Much of current technology in the music industry works at innovating sound, but there have been limited innovations in understanding the language of music. There exists no effective tool for the perception of musical notation, inhibiting the improvement of playback and visual music manipulation. This has inspired a field of research, which is known as Optical Music Recognition (OMR).    
 
