@@ -2,10 +2,10 @@
 
 Much of the current technology in the music industry works at innovating sound, but there have been limited innovations in understanding the language of music. One particular field of research, known as Optical Music Recognition (OMR), is attempting to bridge this gap by developing computational methods to read music notation within documents. The goal of OMR is to teach the computer to interpret sheet music and produce a machine-readable version of the score.
 
-In this project, I developed a Pytorch-based machine-learning model that can transcribe music notes from a musical score. The model was inspired by Calvo-Zaragoza, a scientist specializing in OMR research: [End-to-End Neural Optical Music Recognition of Monophonic Scores](https://www.mdpi.com/2076-3417/8/4/606) (Applied Sciences Journal). The paper proposes an architectural model composed of a Convolutional Recurrent Neural Network and a Connectionist Temporal Classification loss function. An example of the model's classification process is shown below.
+In this project, I developed a Pytorch-based machine-learning model that can transcribe music notes from a musical score. The model was inspired by Calvo-Zaragoza, a scientist specializing in OMR research: [End-to-End Neural Optical Music Recognition of Monophonic Scores](https://www.mdpi.com/2076-3417/8/4/606) (Applied Sciences Journal). The paper proposes an architectural model composed of a Convolutional Recurrent Neural Network and a Connectionist Temporal Classification loss function. Watch our presentation video below:
 
 <img src="https://user-images.githubusercontent.com/59242538/132921015-682197f4-2b13-4670-86f3-231922f7e4f5.png" alt="drawing" width="750" height="550"/>
-
+![[Presentation](https://img.youtube.com/vi/VK6B7G5JZXw&ab_channel=JeffZhai/0.jpg/)](https://www.youtube.com/watch?v=VK6B7G5JZXw)
 
 # Installation 
 
@@ -25,7 +25,7 @@ python predict_semantic.py -m src/music_classifer_model.pth -v semantics/vocabul
 
 Constraints: 
 - The score must be [monophonic](https://www.collinsdictionary.com/dictionary/english/monophonic). 
-- Make sure the input image is clear and cropped properly. 
+- Make sure the input image is clear and properly cropped. 
 
 ### Example Usage:
   1. Input the sample.png image provided in the sample_image directory. 
