@@ -4,7 +4,7 @@ Much of the current technology in the music industry works at innovating sound, 
 
 In this project, I developed a Pytorch-based machine-learning model that can transcribe music notes from a musical score. The model was inspired by Calvo-Zaragoza, a scientist specializing in OMR research: [End-to-End Neural Optical Music Recognition of Monophonic Scores](https://www.mdpi.com/2076-3417/8/4/606) (Applied Sciences Journal). The paper proposes an architectural model composed of a Convolutional Recurrent Neural Network and a Connectionist Temporal Classification loss function. Watch our presentation video below:
 
-[![Presentation](https://img.youtube.com/vi/VK6B7G5JZXw&ab_channel=JeffZhai/0.jpg/)](https://www.youtube.com/watch?v=VK6B7G5JZXw)
+[![Presentation](https://img.youtube.com/vi/VK6B7G5JZXw/0.jpg)](https://www.youtube.com/watch?v=VK6B7G5JZXw)
 
 # Installation 
 
